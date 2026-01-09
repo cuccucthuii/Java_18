@@ -1,6 +1,7 @@
 package business;
 
 import entity.Product;
+import entity.StatiticsProduct;
 import util.ConnectionDB;
 
 import java.sql.CallableStatement;
@@ -20,7 +21,7 @@ public class ProductBusiness {
         List<Product> list = null; // List product current null
 
         try {
-           conn = ConnectionDB.openConnection(); // Open connection
+            conn = ConnectionDB.openConnection(); // Open connection
             // Call Proc/ Func
             stmt = conn.prepareCall("{call get_all_product()}");
             boolean hasData = stmt.execute();
@@ -40,10 +41,10 @@ public class ProductBusiness {
                 }
             }
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace(); // print error
-        }finally {
-            ConnectionDB.closeConnection(conn,stmt);
+        } finally {
+            ConnectionDB.closeConnection(conn, stmt);
         }
         return list;
     }
@@ -62,10 +63,10 @@ public class ProductBusiness {
             stmt.setBoolean(6, product.isProduct_status());
             stmt.executeUpdate();
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            ConnectionDB.closeConnection(conn,stmt);
+        } finally {
+            ConnectionDB.closeConnection(conn, stmt);
         }
         return false;
     }
@@ -85,10 +86,10 @@ public class ProductBusiness {
             stmt.setBoolean(7, product.isProduct_status());
             stmt.executeUpdate();
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            ConnectionDB.closeConnection(conn,stmt);
+        } finally {
+            ConnectionDB.closeConnection(conn, stmt);
         }
         return false;
     }
@@ -102,10 +103,10 @@ public class ProductBusiness {
             stmt.setInt(1, product_id);
             stmt.executeUpdate();
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            ConnectionDB.closeConnection(conn,stmt);
+        } finally {
+            ConnectionDB.closeConnection(conn, stmt);
         }
         return false;
     }
@@ -130,11 +131,96 @@ public class ProductBusiness {
                 product.setProduct_catalog(rs.getString("product_catalog"));
                 product.setProduct_status(Boolean.parseBoolean(rs.getString("product_status")));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, stmt);
+        }
+        return product;
+    }
+
+    public static List<Product> getProductByName(String name) {
+        Connection conn = null;
+        CallableStatement stmt = null;
+        List<Product> list = new ArrayList<>();
+        try {
+            conn = ConnectionDB.openConnection();
+            stmt = conn.prepareCall("{call find_product_by_name(?)}");
+            stmt.setString(1, name);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setProduct_id(rs.getInt("product_id"));
+                product.setProduct_name(rs.getString("product_name"));
+                product.setProduct_price(rs.getDouble("product_price"));
+                product.setProduct_title(rs.getString("product_title"));
+                product.setProduct_created(LocalDate.parse(rs.getString("product_created")));
+                product.setProduct_catalog(rs.getString("product_catalog"));
+                product.setProduct_status(Boolean.parseBoolean(rs.getString("product_status")));
+                list.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, stmt);
+        }
+        return list;
+    }
+
+    public static List<Product> getProductByPriceAsc() {
+        Connection conn = null;
+        CallableStatement stmt = null;
+        List<Product> list = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            stmt = conn.prepareCall("{call soft_product_by_price_asc()}");
+            boolean hasData = stmt.execute();
+            if (hasData) {
+                ResultSet rs = stmt.getResultSet();
+                list = new ArrayList<>();
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setProduct_id(rs.getInt("product_id"));
+                    product.setProduct_name(rs.getString("product_name"));
+                    product.setProduct_price(rs.getDouble("product_price"));
+                    product.setProduct_title(rs.getString("product_title"));
+                    product.setProduct_created(LocalDate.parse(rs.getString("product_created")));
+                    product.setProduct_catalog(rs.getString("product_catalog"));
+                    product.setProduct_status(Boolean.parseBoolean(rs.getString("product_status")));
+                    list.add(product);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionDB.closeConnection(conn, stmt);
+        }
+        return list;
+    }
+
+    public static List<StatiticsProduct> getStaticProductByCatalog(){
+        Connection conn = null;
+        CallableStatement stmt = null;
+        List<StatiticsProduct> list = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            stmt = conn.prepareCall("{call statitics_by_catalog()}");
+            boolean hasData = stmt.execute();
+            if (hasData) {
+                ResultSet rs = stmt.getResultSet();
+                list = new ArrayList<>();
+                while (rs.next()) {
+                    StatiticsProduct statitics = new StatiticsProduct();
+                    statitics.setCatalog(rs.getString("product_catalog"));
+                    statitics.setTotal_products(rs.getInt("total_product"));
+                    list.add(statitics);
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            ConnectionDB.closeConnection(conn,stmt);
+            ConnectionDB.closeConnection(conn, stmt);
         }
-        return product;
+        return list;
     }
 }

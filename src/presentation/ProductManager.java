@@ -2,6 +2,7 @@ package presentation;
 
 import business.ProductBusiness;
 import entity.Product;
+import entity.StatiticsProduct;
 
 import java.util.List;
 import java.util.Scanner;
@@ -41,10 +42,13 @@ public class ProductManager {
                     deleteProductById(sc);
                     break;
                 case 5:
+                    findProductByName(sc);
                     break;
                 case 6:
+                    findProductByPriceAsc();
                     break;
                 case 7:
+                    statiticsProductByCatalog();
                     break;
                 case 8:
                     System.exit(0);
@@ -82,53 +86,53 @@ public class ProductManager {
         if (pro == null) {
             System.err.println("Product ID " + id + " not found!");
         } else {
-           do {
-               System.out.println("MENU DATA UPDATE");
-               System.out.println("1. Name");
-               System.out.println("2. Price");
-               System.out.println("3. Title");
-               System.out.println("4. created");
-               System.out.println("5. catalog");
-               System.out.println("6. status");
-               System.out.println("7. Exit");
-               System.out.println("Enter your choice: ");
-               try {
-                   choice = Integer.parseInt(scanner.nextLine());
-               } catch (Exception e) {
-                   System.err.println("Invalid choice");
-               }
-               switch (choice) {
-                   case 1:
-                       pro.nameInput(scanner);
-                       break;
-                   case 2:
-                       pro.priceInput(scanner);
-                       break;
-                   case 3:
-                       pro.titleInput(scanner);
-                       break;
-                   case 4:
-                       pro.createdInput(scanner);
-                       break;
-                   case 5:
-                       pro.catalogInput(scanner);
-                       break;
-                   case 6:
-                       pro.statusInput(scanner);
-                       break;
-                   case 7:
-                       System.out.println("Exit successfully!");
-                       isExit = false;
-                       break;
-                   default:
-                       System.out.println("Choice 1-7");
-               }
-           }while (isExit);
+            do {
+                System.out.println("MENU DATA UPDATE");
+                System.out.println("1. Name");
+                System.out.println("2. Price");
+                System.out.println("3. Title");
+                System.out.println("4. created");
+                System.out.println("5. catalog");
+                System.out.println("6. status");
+                System.out.println("7. Exit");
+                System.out.println("Enter your choice: ");
+                try {
+                    choice = Integer.parseInt(scanner.nextLine());
+                } catch (Exception e) {
+                    System.err.println("Invalid choice");
+                }
+                switch (choice) {
+                    case 1:
+                        pro.nameInput(scanner);
+                        break;
+                    case 2:
+                        pro.priceInput(scanner);
+                        break;
+                    case 3:
+                        pro.titleInput(scanner);
+                        break;
+                    case 4:
+                        pro.createdInput(scanner);
+                        break;
+                    case 5:
+                        pro.catalogInput(scanner);
+                        break;
+                    case 6:
+                        pro.statusInput(scanner);
+                        break;
+                    case 7:
+                        System.out.println("Exit successfully!");
+                        isExit = false;
+                        break;
+                    default:
+                        System.out.println("Choice 1-7");
+                }
+            } while (isExit);
         }
         boolean result = ProductBusiness.updateProduct(pro);
         if (result) {
             System.out.println("Update successfully!");
-        }else  {
+        } else {
             System.out.println("Update failed!");
         }
     }
@@ -140,13 +144,57 @@ public class ProductManager {
         if (product == null) {
             System.err.println("Product ID " + id + " not found!");
             return;
-        }else{
+        } else {
             boolean result = ProductBusiness.deleteProduct(id);
             if (result) {
                 System.out.println("Delete successfully!");
-            }else{
+            } else {
                 System.out.println("Delete failed!");
             }
+        }
+    }
+
+    public static void findProductById(Scanner scanner) {
+        System.out.println("Enter product ID: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        Product result = ProductBusiness.existsProductById(id);
+        if (result == null) {
+            System.err.println("Product ID " + id + " not found!");
+        } else {
+            System.out.println("PRODUCT");
+            System.out.println(result);
+        }
+    }
+
+    public static void findProductByName(Scanner scanner) {
+        System.out.println("Enter product name: ");
+        String name = scanner.nextLine();
+        List<Product> product = ProductBusiness.getProductByName(name);
+        if (product == null) {
+            System.err.println("Product name " + name + " not found!");
+        } else {
+            System.out.println("PRODUCT");
+            product.forEach(System.out::println);
+        }
+    }
+
+    public static void findProductByPriceAsc(){
+        List<Product> product = ProductBusiness.getProductByPriceAsc();
+        if (product == null) {
+            System.err.println("Product price not found!");
+        }else{
+            System.out.println("PRODUCT");
+            product.forEach(System.out::println);
+        }
+    }
+
+    public static void statiticsProductByCatalog(){
+        List<StatiticsProduct> list = ProductBusiness.getStaticProductByCatalog();
+        if (list == null) {
+            System.err.println("Product catalog not found!");
+        }else{
+            System.out.println("STATIC PRODUCT");
+            list.forEach(System.out::println);
         }
     }
 
