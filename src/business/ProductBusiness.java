@@ -93,6 +93,24 @@ public class ProductBusiness {
         return false;
     }
 
+    public static boolean deleteProduct(int product_id) {
+        Connection conn = null;
+        CallableStatement stmt = null;
+        try {
+            conn = ConnectionDB.openConnection();
+            stmt = conn.prepareCall("call delete_product_by_id(?)");
+            stmt.setInt(1, product_id);
+            stmt.executeUpdate();
+            return true;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            ConnectionDB.closeConnection(conn,stmt);
+        }
+        return false;
+    }
+
+
     public static Product existsProductById(int product_id) {
         Connection conn = null;
         CallableStatement stmt = null;

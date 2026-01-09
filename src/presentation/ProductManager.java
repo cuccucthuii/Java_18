@@ -38,6 +38,7 @@ public class ProductManager {
                     updateProductById(sc);
                     break;
                 case 4:
+                    deleteProductById(sc);
                     break;
                 case 5:
                     break;
@@ -129,6 +130,23 @@ public class ProductManager {
             System.out.println("Update successfully!");
         }else  {
             System.out.println("Update failed!");
+        }
+    }
+
+    public static void deleteProductById(Scanner scanner) {
+        System.out.println("Enter product ID: ");
+        int id = Integer.parseInt(scanner.nextLine());
+        Product product = ProductBusiness.existsProductById(id);
+        if (product == null) {
+            System.err.println("Product ID " + id + " not found!");
+            return;
+        }else{
+            boolean result = ProductBusiness.deleteProduct(id);
+            if (result) {
+                System.out.println("Delete successfully!");
+            }else{
+                System.out.println("Delete failed!");
+            }
         }
     }
 
